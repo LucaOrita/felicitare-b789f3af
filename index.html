@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>La mulți ani</title>
+<style>html,body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: full-bleed confetti canvas pinned behind one left-aligned column (max 40rem): greeting, cake with a single candle to blow out, message, sign-off. */
+:root{
+  --bg:#f4effa;
+  --surface:#ffffff;
+  --fg:#2a1f3d;
+  --muted:#6b5f80;
+  --accent:#e0366f;
+  --gold:#f2b134;
+  --teal:#3dbdb0;
+  --flame:#ff9f1c;
+  --line:rgba(42,31,61,.14);
+  --font-display:"Fraunces",Georgia,"Times New Roman",serif;
+  --font-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1b1526; --surface:#271e38; --fg:#f6f1ff; --muted:#b7abcf;
+    --accent:#ff5c92; --gold:#ffcb57; --teal:#4fd6c8; --flame:#ffb347;
+    --line:rgba(246,241,255,.16); color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1b1526; --surface:#271e38; --fg:#f6f1ff; --muted:#b7abcf;
+  --accent:#ff5c92; --gold:#ffcb57; --teal:#4fd6c8; --flame:#ffb347;
+  --line:rgba(246,241,255,.16); color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:1.0625rem;line-height:1.6}
+#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+
+.page{
+  position:relative;z-index:1;max-width:40rem;margin-inline:auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:clamp(2.5rem,8vw,5rem) 4rem;
+  display:grid;gap:clamp(2.5rem,7vw,4rem)
+}
+
+.eyebrow{margin:0 0 .75rem;font-size:.8rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.title{
+  margin:0;font-family:var(--font-display);font-weight:600;
+  font-size:clamp(3.25rem,14vw,6.75rem);line-height:.95;letter-spacing:-.02em;text-wrap:balance;
+  font-variation-settings:"opsz" 144,"SOFT" 60,"WONK" 1
+}
+.title em{font-style:italic;font-weight:400;color:var(--accent);font-variation-settings:"opsz" 144,"SOFT" 100,"WONK" 1}
+.lead{margin:1.25rem 0 0;font-size:clamp(1.125rem,2.6vw,1.375rem);color:var(--muted);max-width:34ch;text-wrap:pretty}
+
+.cake-wrap{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:2rem;align-items:center;
+  padding:1.75rem;border:1px solid var(--line);border-radius:1.5rem;background:var(--surface)
+}
+@media (max-width:560px){.cake-wrap{grid-template-columns:1fr;gap:1.5rem}}
+
+.cake{position:relative;width:200px;max-width:100%;margin-inline:auto;display:grid;justify-items:center;padding-top:70px}
+.candle{position:relative;width:14px;height:54px;border-radius:4px 4px 0 0;margin-bottom:-4px;z-index:1;
+  background:repeating-linear-gradient(135deg,var(--surface) 0 6px,var(--accent) 6px 12px)}
+.wick{position:absolute;left:50%;bottom:100%;width:2px;height:8px;background:var(--fg);transform:translateX(-50%);border-radius:1px}
+.flame{
+  position:absolute;left:50%;bottom:calc(100% + 6px);width:16px;height:28px;
+  transform:translateX(-50%);transform-origin:50% 100%;
+  background:radial-gradient(ellipse at 50% 72%,#fff6d5 0 24%,var(--flame) 48%,var(--accent) 100%);
+  border-radius:50% 50% 50% 50%/62% 62% 38% 38%;
+  box-shadow:0 0 20px 7px color-mix(in srgb,var(--flame) 45%,transparent);
+  animation:flicker .9s ease-in-out infinite alternate;
+  transition:opacity .3s ease,transform .3s ease
+}
+.smoke{position:absolute;left:50%;bottom:calc(100% + 10px);width:7px;height:7px;border-radius:50%;background:var(--muted);opacity:0;transform:translateX(-50%)}
+.cake.out .flame{opacity:0;transform:translateX(-50%) scale(.2);animation:none;box-shadow:none}
+.cake.out .smoke{animation:smoke 1.8s ease-out forwards}
+.layer{position:relative;height:42px;border-radius:12px 12px 8px 8px;box-shadow:inset 0 7px 0 rgba(255,255,255,.35)}
+.layer.top{width:54%;background:var(--gold);border-radius:14px 14px 4px 4px}
+.layer.mid{width:72%;background:var(--teal);margin-top:-4px}
+.layer.base{width:90%;background:var(--accent);margin-top:-4px}
+.plate{width:100%;height:14px;border-radius:999px;background:var(--line);margin-top:2px}
+
+.cake-text{min-width:0}
+.cake-text h2{margin:0 0 .5rem;font-family:var(--font-display);font-weight:600;font-size:1.75rem;line-height:1.1;text-wrap:balance}
+.cake-text p{margin:0 0 1.25rem;color:var(--muted)}
+.btn{
+  appearance:none;border:0;cursor:pointer;font:inherit;font-weight:600;font-size:1rem;
+  padding:.85rem 1.4rem;border-radius:999px;background:var(--accent);color:#fff;
+  box-shadow:0 10px 22px -10px var(--accent);transition:transform .15s ease
+}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(1px)}
+.btn:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+
+.message{display:grid;gap:1.1rem;max-width:60ch}
+.message p{margin:0;font-size:1.125rem}
+.signoff{margin-top:.5rem;font-family:var(--font-display);font-style:italic;font-weight:400;font-size:1.6rem;line-height:1.3}
+.signoff span{color:var(--accent)}
+
+@keyframes flicker{
+  from{transform:translateX(-50%) scaleY(1) rotate(-2deg)}
+  to{transform:translateX(-50%) scaleY(1.12) rotate(3deg)}
+}
+@keyframes smoke{
+  0%{opacity:.75;transform:translate(-50%,0) scale(1)}
+  100%{opacity:0;transform:translate(-20%,-70px) scale(3.2)}
+}
+@media (prefers-reduced-motion: reduce){
+  .flame,.cake.out .smoke{animation:none}
+  .btn,.flame{transition:none}
+}
+</style>
+
+</head>
+<body>
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<main class="page">
+  <header class="hero">
+    <p class="eyebrow">Astăzi e ziua ta</p>
+    <h1 class="title">La mulți <em>ani!</em></h1>
+    <p class="lead">Să ai parte de un an plin de bucurie, sănătate și oameni dragi în jur.</p>
+  </header>
+
+  <section class="cake-wrap" aria-labelledby="cake-title">
+    <div class="cake" id="cake" aria-hidden="true">
+      <div class="candle">
+        <div class="wick"></div>
+        <div class="flame"></div>
+        <div class="smoke"></div>
+      </div>
+      <div class="layer top"></div>
+      <div class="layer mid"></div>
+      <div class="layer base"></div>
+      <div class="plate"></div>
+    </div>
+    <div class="cake-text">
+      <h2 id="cake-title">Pune-ți o dorință</h2>
+      <p id="wish-text">Apasă pe buton și suflă în lumânare.</p>
+      <button class="btn" id="blow" type="button">Suflă în lumânare</button>
+    </div>
+  </section>
+
+  <section class="message">
+    <p>Astăzi e despre tine. Despre râsul tău, despre felul în care faci lucrurile să pară ușoare și despre toate momentele frumoase care urmează.</p>
+    <p>Îți doresc un an în care să ai curaj pentru planurile mari, răbdare pentru cele mici și timp pentru oamenii care contează. Și, bineînțeles, un tort suficient de mare pentru toți.</p>
+    <p class="signoff">Cu drag,<br><span>cineva care ține la tine</span></p>
+  </section>
+</main>
+
+<script>
+(function(){
+  var canvas=document.getElementById('confetti');
+  var ctx=canvas.getContext('2d');
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var parts=[],raf=null,W=0,H=0,dpr=Math.min(window.devicePixelRatio||1,2);
+
+  function size(){
+    W=canvas.clientWidth;H=canvas.clientHeight;
+    canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  window.addEventListener('resize',size);
+  size();
+
+  function colors(){
+    var s=getComputedStyle(document.documentElement);
+    return ['--accent','--gold','--teal','--flame'].map(function(v){return s.getPropertyValue(v).trim()||'#e0366f';});
+  }
+
+  function burst(n,x,y){
+    var cs=colors();
+    for(var i=0;i<n;i++){
+      var a=Math.random()*Math.PI*2,sp=5+Math.random()*9;
+      parts.push({
+        x:x,y:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-7,
+        w:6+Math.random()*6,h:4+Math.random()*4,
+        r:Math.random()*Math.PI,vr:(Math.random()-.5)*.3,
+        c:cs[i%cs.length],life:1,shape:Math.random()<.3?'c':'r'
+      });
+    }
+    if(!raf)raf=requestAnimationFrame(tick);
+  }
+
+  function tick(){
+    ctx.clearRect(0,0,W,H);
+    for(var i=parts.length-1;i>=0;i--){
+      var p=parts[i];
+      p.vy+=.25;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;p.life-=.006;
+      if(p.y>H+20||p.life<=0){parts.splice(i,1);continue;}
+      ctx.save();
+      ctx.translate(p.x,p.y);ctx.rotate(p.r);
+      ctx.globalAlpha=Math.max(0,Math.min(1,p.life*1.5));
+      ctx.fillStyle=p.c;
+      if(p.shape==='c'){ctx.beginPath();ctx.arc(0,0,p.w/2,0,Math.PI*2);ctx.fill();}
+      else{ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h*Math.abs(Math.cos(p.r*2))+1);}
+      ctx.restore();
+    }
+    if(parts.length){raf=requestAnimationFrame(tick);}
+    else{raf=null;ctx.clearRect(0,0,W,H);}
+  }
+
+  function celebrate(){
+    burst(90,W*0.22,H*0.3);
+    burst(90,W*0.78,H*0.25);
+  }
+
+  var cake=document.getElementById('cake');
+  var btn=document.getElementById('blow');
+  var txt=document.getElementById('wish-text');
+  var lit=true;
+
+  btn.addEventListener('click',function(){
+    if(lit){
+      lit=false;
+      cake.classList.add('out');
+      txt.textContent='Dorința e pusă. Să ți se împlinească!';
+      btn.textContent='Aprinde din nou';
+      var r=cake.getBoundingClientRect();
+      burst(reduce?40:150,r.left+r.width/2,r.top+r.height*0.3);
+    }else{
+      lit=true;
+      cake.classList.remove('out');
+      txt.textContent='Apasă pe buton și suflă în lumânare.';
+      btn.textContent='Suflă în lumânare';
+    }
+  });
+
+  if(!reduce){setTimeout(celebrate,500);}
+})();
+</script>
+</body>
+</html>
